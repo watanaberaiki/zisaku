@@ -109,6 +109,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	minModel = model->GetminModel();
 	maxModel = model->GetmaxModel();
 
+
 	//’n–Ê
 	XMFLOAT3 minModel2 = {}, maxModel2 = {};
 	Model* model2 = Model::LoadFromObj("plane", minModel2, maxModel2);
