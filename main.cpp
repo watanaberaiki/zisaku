@@ -98,9 +98,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Sprite* hitsprite = new Sprite();
 	hitsprite->Initialize(spriteCommon, 0);
 
-	/*Sprite* sprite1 = new Sprite();
-	sprite1->Initialize(spriteCommon, 1);
-	sprite1->SetPosition({ 800,300 });*/
+	Sprite* mariosprite = new Sprite();
+	mariosprite->Initialize(spriteCommon, 1);
+	mariosprite->SetAnchorPoint(XMFLOAT2(0.5f,0.5f));
+	mariosprite->SetPosition(XMFLOAT2(winApp->window_width/2,winApp->window_height/2));
+	
 
 	/*OBJからモデルデータを読み込む*/
 	//球
@@ -185,50 +187,53 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//入力の更新
 		input->Update();
 
-		XMFLOAT3 spherepos = sphereobj->GetPosition();
+		//XMFLOAT3 spherepos = sphereobj->GetPosition();
 
-		//移動
-		if (input->PushKey(DIK_A) || input->PushKey(DIK_D)) {
-			if (input->PushKey(DIK_A)) {
-				spherepos.x -= 0.05;
+		////移動
+		//if (input->PushKey(DIK_A) || input->PushKey(DIK_D)) {
+		//	if (input->PushKey(DIK_A)) {
+		//		spherepos.x -= 0.05;
 
-			}
-			else if (input->PushKey(DIK_D)) {
-				spherepos.x += 0.05;
+		//	}
+		//	else if (input->PushKey(DIK_D)) {
+		//		spherepos.x += 0.05;
 
-			}
-		}
-		if (isHit == true) {
-			jumpspeed = 0;
-			if (input->PushKey(DIK_SPACE)) {
-				jumpspeed = normaljump;
-				spherepos.y += jumpspeed;
-			}
-		}
-		else if (isHit == false) {
-			jumpspeed -= gravity;
-			spherepos.y += jumpspeed;
-		}
+		//	}
+		//}
+		//if (isHit == true) {
+		//	jumpspeed = 0;
+		//	if (input->PushKey(DIK_SPACE)) {
+		//		jumpspeed = normaljump;
+		//		spherepos.y += jumpspeed;
+		//	}
+		//}
+		//else if (isHit == false) {
+		//	jumpspeed -= gravity;
+		//	spherepos.y += jumpspeed;
+		//}
 
 
-		sphereobj->SetPosition(spherepos);
-		sphere.center = XMVectorSet(sphereobj->GetPosition().x, sphereobj->GetPosition().y, sphereobj->GetPosition().z, 1);
-		//当たり判定
-		XMVECTOR inter;
-		bool hit = Collision::CheckSphere2Plane(sphere, plane, &inter);
-		if (hit) {
-			isHit = true;
-			hitsprite->Update();
-		}
-		else {
-			isHit = false;
-		}
-		
-		sphereobj->SetPosition(spherepos);
+		//sphereobj->SetPosition(spherepos);
+		//sphere.center = XMVectorSet(sphereobj->GetPosition().x, sphereobj->GetPosition().y, sphereobj->GetPosition().z, 1);
+		////当たり判定
+		//XMVECTOR inter;
+		//bool hit = Collision::CheckSphere2Plane(sphere, plane, &inter);
+		//if (hit) {
+		//	isHit = true;
+		//	hitsprite->Update();
+		//}
+		//else {
+		//	isHit = false;
+		//}
+		//
+		//sphereobj->SetPosition(spherepos);
 
-		matView = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-		sphereobj->Update(matView);
-		planeobj->Update(matView);
+		//matView = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+		//sphereobj->Update(matView);
+		//planeobj->Update(matView);
+
+		mariosprite->Update();
+		hitsprite->Update();
 
 		//// 4.描画コマンドここから
 
@@ -237,17 +242,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//最初のシーンの描画
 		Object3d::PreDraw(dxCommon->GetCommandlist());
 		
-		sphereobj->Draw();
-		planeobj->Draw();
+		/*sphereobj->Draw();
+		planeobj->Draw();*/
 
 		Object3d::PostDraw();
 
 
 		spriteCommon->PreDraw();
 
-		if (isHit) {
-			hitsprite->Draw();
-		}
+		
+		hitsprite->Draw();
+		mariosprite->Draw();
 
 		spriteCommon->PostDraw();
 
