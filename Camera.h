@@ -1,11 +1,12 @@
 #pragma once
 #include <DirectXTex.h>
+#include"Input.h"
 using namespace DirectX;
 
 class Camera
 {
 public:
-	void Initialize();
+	void Initialize(Input* input);
 	void Update();
 
 public:
@@ -53,6 +54,7 @@ private:
 	XMFLOAT3 target;	//注視点座標
 	XMFLOAT3 up;		//上方向ベクトル
 	XMMATRIX matProjection;
-	float angle = 0.0f;//カメラの回転角
+
+	Input* input = nullptr;
 };
 

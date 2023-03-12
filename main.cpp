@@ -173,12 +173,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	XMFLOAT3 eye(0, 5, -30);	//視点座標
 	XMFLOAT3 target(0, 0, 0);	//注視点座標
 	XMFLOAT3 up(0, 1, 0);		//上方向ベクトル
-	camera.Initialize();
+	camera.Initialize(input);
 	camera.SetEye(eye);
 	camera.SetTarget(target);
 	camera.SetUp(up);
 
-	camera2.Initialize();
+	camera2.Initialize(input);
 
 	int cameraNo = 1;
 	//最初のシーンの初期化
