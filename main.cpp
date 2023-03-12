@@ -21,7 +21,7 @@
 #include <DirectXTex.h>
 #include "CollisionPrimitive.h"
 #include "Collision.h"
-
+#include"Camera.h"
 
 #pragma comment (lib,"d3dcompiler.lib")
 
@@ -115,6 +115,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	minModel2 = model2->GetminModel();
 	maxModel2 = model2->GetmaxModel();
 
+	//疑似敵
+	XMFLOAT3 minModel3 = {}, maxModel3 = {};
+	Model* model3 = Model::LoadFromObj("cube", minModel3, maxModel3);
+	minModel3 = model3->GetminModel();
+	maxModel3 = model3->GetmaxModel();
 
 	//球
 	Object3d* sphereobj = Object3d::Create();
@@ -130,6 +135,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	planeobj->SetPosition({ 0,0,0 });
 	planeobj->SetScale({ 100.0f,1.0f,10.0f });
 
+	//疑似敵
+	Object3d* cubeobj = Object3d::Create();
+	cubeobj->SetModel(model3);
+	cubeobj->SetPosition({ 10,1,5 });
+	cubeobj->SetRotation({0,90,0});
 
 	//球判定
 	Sphere sphere;
@@ -154,15 +164,23 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	float lowjump = 0.3f;
 	int jumpCount = 0;
 
+
+	//カメラ
+	Camera camera;
+	Camera camera2;
 	//ビュー変換行列
 	XMMATRIX matView;
 	XMFLOAT3 eye(0, 5, -30);	//視点座標
 	XMFLOAT3 target(0, 0, 0);	//注視点座標
 	XMFLOAT3 up(0, 1, 0);		//上方向ベクトル
-	matView = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-	float angle = 0.0f;//カメラの回転角
+	camera.Initialize();
+	camera.SetEye(eye);
+	camera.SetTarget(target);
+	camera.SetUp(up);
 
+	camera2.Initialize();
 
+	int cameraNo = 1;
 	//最初のシーンの初期化
 
 #ifdef _DEBUG
@@ -225,10 +243,25 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		
 		sphereobj->SetPosition(spherepos);
 
-		matView = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+		if (input->TriggerKey(DIK_1)) {
+			cameraNo = 1;
+		}
+		else if (input->TriggerKey(DIK_2)) {
+			cameraNo = 2;
+		}
+		//カメラ
+		if (cameraNo == 1) {
+			camera.Update();
+			matView = camera.GetmatView();
+		}else if(cameraNo == 2){
+			camera2.Update();
+			matView = camera2.GetmatView();
+		}
+		
+		
 		sphereobj->Update(matView);
 		planeobj->Update(matView);
-
+		cubeobj->Update(matView);
 		//// 4.描画コマンドここから
 
 		dxCommon->PreDraw();
@@ -238,6 +271,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		
 		sphereobj->Draw();
 		planeobj->Draw();
+		cubeobj->Draw();
 
 		Object3d::PostDraw();
 
