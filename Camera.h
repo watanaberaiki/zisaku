@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXTex.h>
 #include"Input.h"
+
 using namespace DirectX;
 
 class Camera

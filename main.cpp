@@ -9,6 +9,7 @@
 //#include<math.h>
 //#include <wrl.h>
 
+#include"Vector3.h"
 #include "Input.h"
 #include"WinApp.h"
 #include"DirectXCommon.h"
@@ -22,7 +23,7 @@
 #include "CollisionPrimitive.h"
 #include "Collision.h"
 #include"Camera.h"
-
+#include <math.h>
 #pragma comment (lib,"d3dcompiler.lib")
 
 enum Scene {
@@ -141,6 +142,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	cubeobj->SetPosition({ 10,1,5 });
 	cubeobj->SetRotation({0,90,0});
 
+	Object3d* collisionobj = Object3d::Create();
+	collisionobj->SetModel(model3);
+	collisionobj->SetPosition({ 10,1,5 });
+	collisionobj->SetScale({ 1,1,10 });
+	collisionobj->SetRotation({ 0,0,0 });
+
 	//球判定
 	Sphere sphere;
 	sphere.center = XMVectorSet(sphereobj->GetPosition().x, sphereobj->GetPosition().y, sphereobj->GetPosition().z,1); //中心点座標
@@ -151,8 +158,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	plane.distance = 0.0;
 
 
+	
 	//判定
 	bool isHit = false;
+	bool isFound = false;
+	bool isback = false;
 
 	//重力
 	const float gravity = 0.05f;
@@ -179,6 +189,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera.SetUp(up);
 
 	camera2.Initialize(input);
+
+	XMFLOAT3 enemytarget;
+	XMFLOAT3 enemyvec;
+	Vector3 enemyEye;
 
 	int cameraNo = 1;
 	//最初のシーンの初期化
@@ -235,13 +249,39 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		bool hit = Collision::CheckSphere2Plane(sphere, plane, &inter);
 		if (hit) {
 			isHit = true;
-			hitsprite->Update();
+			/*hitsprite->Update();*/
 		}
 		else {
 			isHit = false;
 		}
-		
+
 		sphereobj->SetPosition(spherepos);
+		if (isback == false) {
+			if (CheakCollision(sphereobj->GetPosition(), collisionobj->GetPosition(), sphereobj->GetScale(), collisionobj->GetScale(), minModel, minModel3, maxModel, maxModel3)) {
+				isFound = true;
+				hitsprite->Update();
+			}
+			else {
+				isFound = false;
+			}
+		}
+		else {
+			isFound = false;
+		}
+		/*enemytarget = cubeobj->GetPosition();
+		enemytarget.z -= 20;
+
+		enemyvec = cubeobj->GetPosition();
+		enemyvec -= enemytarget;*/
+
+		if (input->TriggerKey(DIK_3)) {
+			if (isback==true) {
+				isback = false;
+			}
+			else {
+				isback = true;
+			}
+		}
 
 		if (input->TriggerKey(DIK_1)) {
 			cameraNo = 1;
@@ -258,10 +298,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			matView = camera2.GetmatView();
 		}
 		
+		if (isback == false) {
+			cubeobj->SetRotation({ 0,90,0 });
+
+		}
+		else if (isback == true) {
+			cubeobj->SetRotation({ 0,270,0 });
+		}
 		
 		sphereobj->Update(matView);
 		planeobj->Update(matView);
 		cubeobj->Update(matView);
+		collisionobj->Update(matView);
 		//// 4.描画コマンドここから
 
 		dxCommon->PreDraw();
@@ -272,13 +320,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		sphereobj->Draw();
 		planeobj->Draw();
 		cubeobj->Draw();
+		/*collisionobj->Draw();*/
 
 		Object3d::PostDraw();
 
 
 		spriteCommon->PreDraw();
 
-		if (isHit) {
+		if (isFound) {
 			hitsprite->Draw();
 		}
 
