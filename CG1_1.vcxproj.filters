@@ -51,6 +51,9 @@
     <ClCompile Include="Vector3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\BasicPS.hlsl">
@@ -71,6 +74,15 @@
     <FxCompile Include="Resources\shaders\SpriteVS.hlsl">
       <Filter>シェーダー</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\ParticleGS.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\ParticlePS.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\ParticleVS.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli">
@@ -80,6 +92,9 @@
       <Filter>シェーダー</Filter>
     </None>
     <None Include="Resources\shaders\Sprite.hlsli">
+      <Filter>シェーダー</Filter>
+    </None>
+    <None Include="Resources\shaders\Particle.hlsli">
       <Filter>シェーダー</Filter>
     </None>
   </ItemGroup>
@@ -115,6 +130,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Vector3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

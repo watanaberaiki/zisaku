@@ -24,6 +24,8 @@
 #include "Collision.h"
 #include"Camera.h"
 #include <math.h>
+#include"ParticleManager.h"
+
 #pragma comment (lib,"d3dcompiler.lib")
 
 enum Scene {
@@ -82,6 +84,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//3Dオブジェクト静的初期化
 	Object3d::StaticInitialize(dxCommon->GetDevice(), winApp->window_width, winApp->window_height);
+	ParticleManager::StaticInitialize(dxCommon->GetDevice(), winApp->window_width, winApp->window_height);
+	//パーティクル
+	ParticleManager* particleManager = nullptr;
+
+	// 3Dオブジェクト生成
+	particleManager = ParticleManager::Create();
+	particleManager->LoadTexture("effect1.png");
+	particleManager->Update();
 
 	SpriteCommon* spriteCommon = nullptr;
 	//スプライト共通部の初期化
@@ -90,7 +100,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 	//基盤システムの初期化
-
 	spriteCommon->LoadTexture(0, "hit.png");
 	spriteCommon->LoadTexture(1, "mario.jpg");
 
@@ -99,53 +108,79 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Sprite* hitsprite = new Sprite();
 	hitsprite->Initialize(spriteCommon, 0);
 
+
 	/*Sprite* sprite1 = new Sprite();
 	sprite1->Initialize(spriteCommon, 1);
 	sprite1->SetPosition({ 800,300 });*/
 
 	/*OBJからモデルデータを読み込む*/
 	//球
-	XMFLOAT3 minModel = {}, maxModel = {};
-	Model* model = Model::LoadFromObj("Skydome", minModel, maxModel);
-	minModel = model->GetminModel();
-	maxModel = model->GetmaxModel();
+	XMFLOAT3 minsphereModel = {}, maxsphereModel = {};
+	Model* spheremodel = Model::LoadFromObj("Skydome", minsphereModel, maxsphereModel);
+	minsphereModel = spheremodel->GetminModel();
+	maxsphereModel = spheremodel->GetmaxModel();
 
 	//地面
-	XMFLOAT3 minModel2 = {}, maxModel2 = {};
-	Model* model2 = Model::LoadFromObj("plane", minModel2, maxModel2);
-	minModel2 = model2->GetminModel();
-	maxModel2 = model2->GetmaxModel();
+	XMFLOAT3 minplaneModel = {}, maxplaneModel = {};
+	Model* planemodel = Model::LoadFromObj("plane", minplaneModel, maxplaneModel);
+	minplaneModel = planemodel->GetminModel();
+	maxplaneModel = planemodel->GetmaxModel();
 
 	//疑似敵
-	XMFLOAT3 minModel3 = {}, maxModel3 = {};
-	Model* model3 = Model::LoadFromObj("cube", minModel3, maxModel3);
-	minModel3 = model3->GetminModel();
-	maxModel3 = model3->GetmaxModel();
+	XMFLOAT3 mincubeModel = {}, maxcubeModel = {};
+	Model* cubemodel = Model::LoadFromObj("cube", mincubeModel, maxcubeModel);
+	mincubeModel = cubemodel->GetminModel();
+	maxcubeModel = cubemodel->GetmaxModel();
+
+	//ブロック
+	XMFLOAT3 minblockModel = {}, maxblockModel = {};
+	Model* blockmodel = Model::LoadFromObj("block", minblockModel, maxblockModel);
+	minblockModel = blockmodel->GetminModel();
+	maxblockModel = blockmodel->GetmaxModel();
+
+	//赤
+	XMFLOAT3 minredModel = {}, maxredModel = {};
+	Model* redmodel = Model::LoadFromObj("redcube", minredModel, maxredModel);
+	minredModel = redmodel->GetminModel();
+	maxredModel = redmodel->GetmaxModel();
+
 
 	//球
 	Object3d* sphereobj = Object3d::Create();
-	sphereobj->SetModel(model);
+	sphereobj->SetModel(spheremodel);
 	sphereobj->SetPosition({ 0,2,0 });
 
 	//地面
 	Object3d* planeobj = Object3d::Create();
 	//オブジェクトにモデルを紐づける
-	planeobj->SetModel(model2);
+	planeobj->SetModel(planemodel);
 	//プレイヤー座標保存用
 	DirectX::XMFLOAT3 playerPosition;
 	planeobj->SetPosition({ 0,0,0 });
 	planeobj->SetScale({ 100.0f,1.0f,10.0f });
 
 	//疑似敵
-	Object3d* cubeobj = Object3d::Create();
-	cubeobj->SetModel(model3);
-	cubeobj->SetPosition({ 10,1,5 });
-	cubeobj->SetRotation({0,90,0});
+	Object3d* cubeobj[3];
+		for (int i = 0; i < 3; i++) {
+			cubeobj[i]= Object3d::Create();
+		}
+	cubeobj[0]->SetPosition({10,1,5});
+	cubeobj[0]->SetRotation({0,90,0});
+	cubeobj[0]->SetModel(cubemodel);
 
-	Object3d* collisionobj = Object3d::Create();
-	collisionobj->SetModel(model3);
-	collisionobj->SetPosition({ 10,1,5 });
-	collisionobj->SetScale({ 1,1,10 });
+	cubeobj[1]->SetPosition({6,1,4});
+	cubeobj[1]->SetRotation({ 0,270,0 });
+	cubeobj[1]->SetModel(blockmodel);
+
+	cubeobj[2]->SetPosition({ 14,1,4 });
+	cubeobj[2]->SetRotation({ 0,270,0 });
+	cubeobj[2]->SetModel(blockmodel);
+
+	//当たり判定
+	Object3d* collisionobj=Object3d::Create();
+	collisionobj->SetModel(redmodel);
+	collisionobj->SetPosition({ 10,1,-2 });
+	collisionobj->SetScale({ 3,1,5 });
 	collisionobj->SetRotation({ 0,0,0 });
 
 	//球判定
@@ -163,6 +198,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	bool isHit = false;
 	bool isFound = false;
 	bool isback = false;
+	float countTime = 0;
+	float maxTime = 100;
 
 	//重力
 	const float gravity = 0.05f;
@@ -180,8 +217,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Camera camera2;
 	//ビュー変換行列
 	XMMATRIX matView;
-	XMFLOAT3 eye(0, 5, -30);	//視点座標
-	XMFLOAT3 target(0, 0, 0);	//注視点座標
+	XMFLOAT3 eye(10, 5, -30);	//視点座標
+	XMFLOAT3 target(10, 0, 0);	//注視点座標
 	XMFLOAT3 up(0, 1, 0);		//上方向ベクトル
 	camera.Initialize(input);
 	camera.SetEye(eye);
@@ -221,14 +258,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//移動
 		if (input->PushKey(DIK_A) || input->PushKey(DIK_D)) {
 			if (input->PushKey(DIK_A)) {
-				spherepos.x -= 0.05;
+				spherepos.x -= 0.1;
 
 			}
 			else if (input->PushKey(DIK_D)) {
-				spherepos.x += 0.05;
+				spherepos.x += 0.1;
 
 			}
 		}
+		//ジャンプ
 		if (isHit == true) {
 			jumpspeed = 0;
 			if (input->PushKey(DIK_SPACE)) {
@@ -240,10 +278,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			jumpspeed -= gravity;
 			spherepos.y += jumpspeed;
 		}
-
-
 		sphereobj->SetPosition(spherepos);
 		sphere.center = XMVectorSet(sphereobj->GetPosition().x, sphereobj->GetPosition().y, sphereobj->GetPosition().z, 1);
+
+
 		//当たり判定
 		XMVECTOR inter;
 		bool hit = Collision::CheckSphere2Plane(sphere, plane, &inter);
@@ -256,8 +294,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 
 		sphereobj->SetPosition(spherepos);
+		//後ろ向いているかどうか
 		if (isback == false) {
-			if (CheakCollision(sphereobj->GetPosition(), collisionobj->GetPosition(), sphereobj->GetScale(), collisionobj->GetScale(), minModel, minModel3, maxModel, maxModel3)) {
+			if (CheakCollision(sphereobj->GetPosition(), collisionobj->GetPosition(), sphereobj->GetScale(), collisionobj->GetScale(), minsphereModel, minredModel, maxsphereModel, maxredModel)) {
 				isFound = true;
 				hitsprite->Update();
 			}
@@ -268,20 +307,23 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		else {
 			isFound = false;
 		}
-		/*enemytarget = cubeobj->GetPosition();
-		enemytarget.z -= 20;
 
-		enemyvec = cubeobj->GetPosition();
-		enemyvec -= enemytarget;*/
+		
 
-		if (input->TriggerKey(DIK_3)) {
-			if (isback==true) {
+		countTime++;
+		if (countTime >= maxTime) {
+			if (isback == true) {
+				particleManager->LoadTexture("effect2.png");
 				isback = false;
 			}
 			else {
+				particleManager->LoadTexture("effect3.png");
 				isback = true;
 			}
+			countTime = 0;
 		}
+
+		
 
 		if (input->TriggerKey(DIK_1)) {
 			cameraNo = 1;
@@ -299,31 +341,78 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 		
 		if (isback == false) {
-			cubeobj->SetRotation({ 0,90,0 });
+			cubeobj[0]->SetRotation({0,90,0});
 
 		}
 		else if (isback == true) {
-			cubeobj->SetRotation({ 0,270,0 });
+			cubeobj[0]->SetRotation({0,270,0});
 		}
 		
 		sphereobj->Update(matView);
 		planeobj->Update(matView);
-		cubeobj->Update(matView);
+		for (int i = 0; i < 3; i++) {
+			cubeobj[i]->Update(matView);
+		}
 		collisionobj->Update(matView);
+
+		//パーティクル
+		for (int i = 0; i < 10; i++) {
+			//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
+			const float rnd_pos = 10.0f;
+			XMFLOAT3 pos{};
+			pos.x = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+			pos.y = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+			pos.z = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+
+			//X,Y,Z全て[-0.05f,+0.05f]でランダムに分布
+			const float rnd_vel = 0.1f;
+			XMFLOAT3 vel{};
+			vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+			vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+			vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+			//重力に見立ててYのみ[-0.001f,0]でランダムに分布
+			const float rnd_acc = 0.001f;
+			XMFLOAT3 acc{};
+			acc.y = -(float)rand() / RAND_MAX * rnd_acc;
+
+			//色
+			const float rnd_color = 1.0f;
+			XMFLOAT4 color{  };
+			color.x = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+			color.y = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+			color.z = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+			color.w = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+			//追加
+			particleManager->Add(60, pos, vel, acc, 1.0f, 0.0f, color);
+		}
+		particleManager->Update();
+
 		//// 4.描画コマンドここから
 
 		dxCommon->PreDraw();
 		
 		//最初のシーンの描画
 		Object3d::PreDraw(dxCommon->GetCommandlist());
-		
+
 		sphereobj->Draw();
 		planeobj->Draw();
-		cubeobj->Draw();
-		/*collisionobj->Draw();*/
+		for (int i = 0; i < 3; i++) {
+			cubeobj[i]->Draw();
+		}
+		if (input->PushKey(DIK_3)&& isback == false) {
+			collisionobj->Draw();
+		}
 
 		Object3d::PostDraw();
 
+		// 3Dオブジェクト描画前処理
+		ParticleManager::PreDraw(dxCommon->GetCommandlist());
+
+		// 3Dオブクジェクトの描画
+		particleManager->Draw();
+
+		// 3Dオブジェクト描画後処理
+		ParticleManager::PostDraw();
 
 		spriteCommon->PreDraw();
 
@@ -363,8 +452,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	delete sphereobj;
 	delete planeobj;
 	//3Dモデル解放
-	delete model;
-	delete model2;
+	delete spheremodel;
+	delete planemodel;
 
 	//delete model3;
 	//delete model4;
