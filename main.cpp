@@ -89,14 +89,76 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//パーティクル
 	ParticleManager* particleManager = new ParticleManager();
 	particleManager->Initialize("effect1.png");
+	//パーティクル
+	for (int i = 0; i < 50; i++) {
+		//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
+		const float rnd_pos = 10.0f;
+		XMFLOAT3 pos{};
+		pos.x = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+		pos.y = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+		pos.z = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+
+		//X,Y,Z全て[-0.05f,+0.05f]でランダムに分布
+		const float rnd_vel = 0.1f;
+		XMFLOAT3 vel{};
+		vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		//重力に見立ててYのみ[-0.001f,0]でランダムに分布
+		const float rnd_acc = 0.001f;
+		XMFLOAT3 acc{};
+		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
+
+		//色
+		const float rnd_color = 1.0f;
+		XMFLOAT4 color{  };
+		color.x = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		color.y = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		color.z = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		color.w = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		//追加
+		particleManager->Add(600, pos, vel, acc, 1.0f, 0.0f, color);
+	}
 	particleManager->Update();
 
 	ParticleManager* particleManager2 = new ParticleManager();
-	particleManager2->Initialize("effect2.png");
+	particleManager2->Initialize("effect3.png");
+	//パーティクル
+	for (int i = 0; i < 50; i++) {
+		//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
+		const float rnd_pos = 10.0f;
+		XMFLOAT3 pos{};
+		pos.x = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+		pos.y = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+		pos.z = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+
+		//X,Y,Z全て[-0.05f,+0.05f]でランダムに分布
+		const float rnd_vel = 0.1f;
+		XMFLOAT3 vel{};
+		vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		//重力に見立ててYのみ[-0.001f,0]でランダムに分布
+		const float rnd_acc = 0.001f;
+		XMFLOAT3 acc{};
+		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
+
+		//色
+		const float rnd_color = 1.0f;
+		XMFLOAT4 color{  };
+		color.x = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		color.y = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		color.z = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		color.w = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
+		//追加
+		particleManager2->Add(600, pos, vel, acc, 1.0f, 0.0f, color);
+	}
 	particleManager2->Update();
 
-	//パーティクル
 	
+
+
+
 
 	SpriteCommon* spriteCommon = nullptr;
 	//スプライト共通部の初期化
@@ -112,6 +174,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//最初のシーンの初期化
 	Sprite* hitsprite = new Sprite();
 	hitsprite->Initialize(spriteCommon, 0);
+	Sprite* mariosprite = new Sprite();
+	mariosprite->Initialize(spriteCommon, 1);
+	mariosprite->SetPosition({ 800,0 });
+	mariosprite->Update();
 
 
 	/*Sprite* sprite1 = new Sprite();
@@ -263,12 +329,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//移動
 		if (input->PushKey(DIK_A) || input->PushKey(DIK_D)) {
 			if (input->PushKey(DIK_A)) {
-				spherepos.x -= 0.1;
-
+				/*spherepos.x -= 0.1;*/
+				eye.x -= 1;
 			}
 			else if (input->PushKey(DIK_D)) {
-				spherepos.x += 0.1;
-
+				/*spherepos.x += 0.1;*/
+				eye.x += 1;
 			}
 		}
 		//ジャンプ
@@ -318,17 +384,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		countTime++;
 		if (countTime >= maxTime) {
 			if (isback == true) {
-				particleManager->LoadTexture("effect2.png");
+				/*particleManager->LoadTexture("effect2.png");*/
 				isback = false;
 			}
 			else {
-				particleManager->LoadTexture("effect3.png");
+				/*particleManager->LoadTexture("effect3.png");*/
 				isback = true;
 			}
 			countTime = 0;
 		}
 
-		
+		camera.SetEye(eye);
 
 		if (input->TriggerKey(DIK_1)) {
 			cameraNo = 1;
@@ -360,36 +426,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 		collisionobj->Update(matView);
 
-		for (int i = 0; i < 50; i++) {
-			//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
-			const float rnd_pos = 10.0f;
-			XMFLOAT3 pos{};
-			pos.x = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
-			pos.y = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
-			pos.z = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
 
-			//X,Y,Z全て[-0.05f,+0.05f]でランダムに分布
-			const float rnd_vel = 0.1f;
-			XMFLOAT3 vel{};
-			vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
-			vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
-			vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
-			//重力に見立ててYのみ[-0.001f,0]でランダムに分布
-			const float rnd_acc = 0.001f;
-			XMFLOAT3 acc{};
-			acc.y = -(float)rand() / RAND_MAX * rnd_acc;
-
-			//色
-			const float rnd_color = 1.0f;
-			XMFLOAT4 color{  };
-			color.x = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-			color.y = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-			color.z = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-			color.w = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-			//追加
-			particleManager->Add(600, pos, vel, acc, 1.0f, 0.0f, color);
-			particleManager2->Add(600, pos, vel, acc, 1.0f, 0.0f, color);
-		}
+		
 
 		particleManager->Update();
 		particleManager2->Update();
@@ -411,26 +449,25 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		Object3d::PostDraw();
 
-		// 3Dオブジェクト描画前処理
-		/*ParticleManager::PreDraw(dxCommon->GetCommandlist());*/
+		//// 3Dオブジェクト描画前処理
+		//ParticleManager::PreDraw(dxCommon->GetCommandlist());
 
 		// 3Dオブクジェクトの描画
 		particleManager->Draw();
 		particleManager2->Draw();
+
 		// 3Dオブジェクト描画後処理
 
-		/*ParticleManager::PostDraw();*/
+		//ParticleManager::PostDraw();
 
 		spriteCommon->PreDraw();
 
-		if (isFound) {
-			hitsprite->Draw();
-		}
+		hitsprite->Draw();
+		mariosprite->Draw();
 
 		spriteCommon->PostDraw();
 
-
-
+		
 
 		//最初のシーンの描画
 
@@ -461,6 +498,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//3Dモデル解放
 	delete spheremodel;
 	delete planemodel;
+
+	delete particleManager;
+	delete particleManager2;
 
 	//delete model3;
 	//delete model4;
