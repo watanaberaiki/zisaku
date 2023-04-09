@@ -84,14 +84,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//3Dオブジェクト静的初期化
 	Object3d::StaticInitialize(dxCommon->GetDevice(), winApp->window_width, winApp->window_height);
-	ParticleManager::StaticInitialize(dxCommon->GetDevice(), winApp->window_width, winApp->window_height);
-	//パーティクル
-	ParticleManager* particleManager = nullptr;
+	ParticleManager::StaticInitialize(dxCommon, winApp->window_width, winApp->window_height);
 
-	// 3Dオブジェクト生成
-	particleManager = ParticleManager::Create();
-	particleManager->LoadTexture("effect1.png");
+	//パーティクル
+	ParticleManager* particleManager = new ParticleManager();
+	particleManager->Initialize("effect1.png");
 	particleManager->Update();
+
+	ParticleManager* particleManager2 = new ParticleManager();
+	particleManager2->Initialize("effect2.png");
+	particleManager2->Update();
+
+	//パーティクル
+	
 
 	SpriteCommon* spriteCommon = nullptr;
 	//スプライト共通部の初期化
@@ -355,8 +360,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 		collisionobj->Update(matView);
 
-		//パーティクル
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 50; i++) {
 			//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
 			const float rnd_pos = 10.0f;
 			XMFLOAT3 pos{};
@@ -383,10 +387,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			color.z = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
 			color.w = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
 			//追加
-			particleManager->Add(60, pos, vel, acc, 1.0f, 0.0f, color);
+			particleManager->Add(600, pos, vel, acc, 1.0f, 0.0f, color);
+			particleManager2->Add(600, pos, vel, acc, 1.0f, 0.0f, color);
 		}
-		particleManager->Update();
 
+		particleManager->Update();
+		particleManager2->Update();
 		//// 4.描画コマンドここから
 
 		dxCommon->PreDraw();
@@ -406,13 +412,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		Object3d::PostDraw();
 
 		// 3Dオブジェクト描画前処理
-		ParticleManager::PreDraw(dxCommon->GetCommandlist());
+		/*ParticleManager::PreDraw(dxCommon->GetCommandlist());*/
 
 		// 3Dオブクジェクトの描画
 		particleManager->Draw();
-
+		particleManager2->Draw();
 		// 3Dオブジェクト描画後処理
-		ParticleManager::PostDraw();
+
+		/*ParticleManager::PostDraw();*/
 
 		spriteCommon->PreDraw();
 

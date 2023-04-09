@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 #include <d3dx12.h>
 #include <forward_list>
+#include "DirectXCommon.h"
 
 /// <summary>
 /// 3Dオブジェクト
@@ -82,48 +83,48 @@ public: // 静的メンバ関数
 	/// <param name="device">デバイス</param>
 	/// <param name="window_width">画面幅</param>
 	/// <param name="window_height">画面高さ</param>
-	static void StaticInitialize(ID3D12Device* device, int window_width, int window_height);
+	static void StaticInitialize(DirectXCommon* dxcommon, int window_width, int window_height);
 
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	/// <param name="cmdList">描画コマンドリスト</param>
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	void PreDraw(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
 	/// 描画後処理
 	/// </summary>
-	static void PostDraw();
+	void PostDraw();
 
 	/// <summary>
 	/// 3Dオブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static ParticleManager* Create();
+	ParticleManager* Create();
 
 	/// <summary>
 	/// 視点座標の取得
 	/// </summary>
 	/// <returns>座標</returns>
-	static const XMFLOAT3& GetEye() { return eye; }
+	 const XMFLOAT3& GetEye() { return eye; }
 
 	/// <summary>
 	/// 視点座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	static void SetEye(XMFLOAT3 eye);
+	 void SetEye(XMFLOAT3 eye);
 
 	/// <summary>
 	/// 注視点座標の取得
 	/// </summary>
 	/// <returns>座標</returns>
-	static const XMFLOAT3& GetTarget() { return target; }
+	 const XMFLOAT3& GetTarget() { return target; }
 
 	/// <summary>
 	/// 注視点座標の設定
 	/// </summary>
 	/// <param name="position">座標</param>
-	static void SetTarget(XMFLOAT3 target);
+	 void SetTarget(XMFLOAT3 target);
 
 	/*/// <summary>
 	/// ベクトルによる移動
@@ -135,28 +136,30 @@ public: // 静的メンバ関数
 	/// ベクトルによる視点移動
 	/// </summary>
 	/// <param name="move">移動量</param>
-	static void CameraMoveEyeVector(XMFLOAT3 move);
+	 void CameraMoveEyeVector(XMFLOAT3 move);
 private: // 静的メンバ変数
 	// デバイス
 	static ID3D12Device* device;
 	// デスクリプタサイズ
 	static UINT descriptorHandleIncrementSize;
 	// コマンドリスト
-	static ID3D12GraphicsCommandList* cmdList;
+	 ID3D12GraphicsCommandList* cmdList;
 	// ルートシグネチャ
 	static ComPtr<ID3D12RootSignature> rootsignature;
 	// パイプラインステートオブジェクト
 	static ComPtr<ID3D12PipelineState> pipelinestate;
 	// デスクリプタヒープ
-	static ComPtr<ID3D12DescriptorHeap> descHeap;
+	ComPtr<ID3D12DescriptorHeap> descHeap;
 	// 頂点バッファ
-	static ComPtr<ID3D12Resource> vertBuff;
-	// テクスチャバッファ
-	static ComPtr<ID3D12Resource> texbuff;
+	ComPtr<ID3D12Resource> vertBuff;
+	//// インデックスバッファ
+	// ComPtr<ID3D12Resource> indexBuff;
+	//// テクスチャバッファ
+	// ComPtr<ID3D12Resource> texbuff;
 	// シェーダリソースビューのハンドル(CPU)
-	static CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
 	// シェーダリソースビューのハンドル(CPU)
-	static CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
 	// ビュー行列
 	static XMMATRIX matView;
 	// 射影行列
@@ -168,15 +171,21 @@ private: // 静的メンバ変数
 	// 上方向ベクトル
 	static XMFLOAT3 up;
 	// 頂点バッファビュー
-	static D3D12_VERTEX_BUFFER_VIEW vbView;
+	D3D12_VERTEX_BUFFER_VIEW vbView;
+	// インデックスバッファビュー
+	D3D12_INDEX_BUFFER_VIEW ibView;
 	// 頂点データ配列
 	static VertexPos vertices[vertexCount];
-	//ビルボード行列
-	static XMMATRIX matBillboard;
-	//Y軸回りビルボード行列
-	static XMMATRIX matBillboardY;
-	//パーティクル配列
-	std::forward_list<Particle>particles;
+	//// 頂点インデックス配列
+	// unsigned short indices[indexCount];
+
+	//ビューボード行列
+	static XMMATRIX matBillbord;
+	//Y軸周りのビューボード行列
+	static XMMATRIX matBillbordY;
+
+	static DirectXCommon* dxcommon;
+
 	//パス
 	static std::string kDefaultTextureDirectoryPath;
 
@@ -184,7 +193,7 @@ private:// 静的メンバ関数
 	/// <summary>
 	/// デスクリプタヒープの初期化
 	/// </summary>
-	static void InitializeDescriptorHeap();
+	void InitializeDescriptorHeap();
 
 	/// <summary>
 	/// カメラ初期化
@@ -202,12 +211,12 @@ private:// 静的メンバ関数
 	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
-	static void LoadTexture();
+	void LoadTexture();
 
 	/// <summary>
 	/// モデル作成
 	/// </summary>
-	static void CreateModel();
+	void CreateModel();
 
 	/// <summary>
 	/// ビュー行列を更新
@@ -215,7 +224,7 @@ private:// 静的メンバ関数
 	static void UpdateViewMatrix();
 
 public: // メンバ関数
-	bool Initialize();
+	bool Initialize(const std::string& fileName);
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
@@ -245,5 +254,11 @@ private: // メンバ変数
 	XMFLOAT3 scale = { 1,1,1 };
 
 	ConstBufferDataMaterial* constMapMaterial = nullptr;
+	
+	//パーティクル配列
+	std::forward_list<Particle> particles;
+
+	// テクスチャバッファ
+	ComPtr<ID3D12Resource> texbuff;
 
 };
