@@ -394,6 +394,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			countTime = 0;
 		}
 
+
 		camera.SetEye(eye);
 
 		if (input->TriggerKey(DIK_1)) {
