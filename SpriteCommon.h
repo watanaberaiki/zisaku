@@ -38,7 +38,7 @@ private:
 	static std::string kDefaultTextureDirectoryPath;
 
 private:
-	DirectXCommon* dxcommon_;
+	DirectXCommon* dxcommon_=nullptr;
 
 	// パイプランステートの生成
 	ComPtr<ID3D12PipelineState> pipelineState;
