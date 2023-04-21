@@ -1,19 +1,9 @@
-#include"Vector3.h"
 #include "Input.h"
 #include"WinApp.h"
 #include"DirectXCommon.h"
-#include "SpriteCommon.h"
-#include "Sprite.h"
-#include"Object3d.h"
-#include <DirectXMath.h>
-#include<math.h>
-#include <d3dcompiler.h>
-#include <DirectXTex.h>
 #include "CollisionPrimitive.h"
 #include "Collision.h"
 #include"Camera.h"
-#include <math.h>
-#include"ParticleManager.h"
 #include"FbxLoader.h"
 
 #include"GameScene.h"

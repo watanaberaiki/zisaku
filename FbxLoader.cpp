@@ -3,7 +3,7 @@
 /// <summary>
 /// 静的メンバ変数の実体
 /// </summary>
-const std::string FbxLoader::baseDirectory = "Resorces/";
+const std::string FbxLoader::baseDirectory = "Resources/";
 
 FbxLoader* FbxLoader::GetInstance()
 {

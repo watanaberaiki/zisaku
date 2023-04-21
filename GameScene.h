@@ -45,16 +45,16 @@ private:
 	
 	/*OBJからモデルデータを読み込む*/
 	//球
-	Model* spheremodel;
+	Model* spheremodel=nullptr;
 	//当たり判定用
 	XMFLOAT3 minsphereModel = {}, maxsphereModel = {};
 	//球
-	Object3d* sphereobj;
+	Object3d* sphereobj=nullptr;
 
 	//カメラ用
 	XMFLOAT3 eye;		//視点座標
 	XMFLOAT3 target;	//注視点座標
 	XMFLOAT3 up;		//上方向ベクトル
-	XMMATRIX matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+	XMMATRIX matView;
 };
 

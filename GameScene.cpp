@@ -85,6 +85,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	eye =XMFLOAT3(0, 5, -30);	//視点座標
 	target = XMFLOAT3(0, 0, 0);	//注視点座標
 	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
+	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 }
 
 void GameScene::Update()
