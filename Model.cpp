@@ -9,7 +9,7 @@
 
 ID3D12Device* Model::device = nullptr;
 
-Model* Model::LoadFromObj(const std::string& modelname, XMFLOAT3 minModel, XMFLOAT3 maxModel)
+Model* Model::LoadFromObj(const std::string& modelname)
 {
 
 	//新たなModel型のインスタンスのメモリを確保
@@ -18,7 +18,7 @@ Model* Model::LoadFromObj(const std::string& modelname, XMFLOAT3 minModel, XMFLO
 	model->InitializeDescriptorHeap();
 
 	//読み込み
-	model->LoadFromOBJInternal(modelname, minModel, maxModel);
+	model->LoadFromOBJInternal(modelname);
 
 	//バッファ生成
 	model->CreateBuff();
@@ -26,7 +26,7 @@ Model* Model::LoadFromObj(const std::string& modelname, XMFLOAT3 minModel, XMFLO
 	return model;
 }
 
-void Model::LoadFromOBJInternal(const std::string& modelname, XMFLOAT3 minModel, XMFLOAT3 maxModel)
+void Model::LoadFromOBJInternal(const std::string& modelname)
 {
 	//ファイルストリーム
 	std::ifstream file;

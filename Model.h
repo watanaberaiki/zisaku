@@ -10,13 +10,13 @@ class Model
 {
 public:
 	//OBJファイルから3Dモデルを読み込む
-	static Model* LoadFromObj(const std::string& modelname, XMFLOAT3 minModel, XMFLOAT3 maxModel);
+	static Model* LoadFromObj(const std::string& modelname);
 	//デバイスセッター
 	static void SetDevice(ID3D12Device* device) { Model::device = device; }
 
 private:
 	//OBJファイルから3Dモデルを読み込む
-	void LoadFromOBJInternal(const std::string& modelname,XMFLOAT3 minModel, XMFLOAT3 maxModel);
+	void LoadFromOBJInternal(const std::string& modelname);
 	//バッファ生成
 	void CreateBuff();
 	//マテリアル読み込み

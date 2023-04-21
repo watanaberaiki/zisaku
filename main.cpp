@@ -16,6 +16,8 @@
 #include"ParticleManager.h"
 #include"FbxLoader.h"
 
+#include"GameScene.h"
+
 #pragma comment (lib,"d3dcompiler.lib")
 
 enum Scene {
@@ -71,9 +73,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//さらにGPU側でもチェックを行えるようにする
 		debugController->SetEnableGPUBasedValidation(TRUE);
 	}
-
 #endif
-
 	//DirectXの初期化
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
@@ -83,9 +83,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//ヤバいエラー時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
 		//エラー時に止まる
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, false);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//警告時に止まる
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, false);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 		//解放
 		infoQueue->Release();
 		//抑制するメッセージのID
@@ -103,11 +103,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//指定したメッセージの表示を抑制する
 		infoQueue->PushStorageFilter(&filter);
 	}
-
 #endif 
 	FbxLoader::GetInstance()->Initialize(dxCommon->GetDevice());
-	//モデル名を指定してファイル読み込み
-	FbxLoader::GetInstance()->LoadModelFromFile("cube");
+
 
 	//入力の初期化
 	input = new Input();
@@ -117,81 +115,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Object3d::StaticInitialize(dxCommon->GetDevice(), winApp->window_width, winApp->window_height);
 	ParticleManager::StaticInitialize(dxCommon, winApp->window_width, winApp->window_height);
 
-	//パーティクル
-	ParticleManager* particleManager = new ParticleManager();
-	particleManager->Initialize("effect1.png");
-	//パーティクル
-	for (int i = 0; i < 50; i++) {
-		//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
-		const float rnd_pos = 10.0f;
-		XMFLOAT3 pos{};
-		pos.x = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
-		pos.y = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
-		pos.z = (float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f;
+	GameScene* gamescene = nullptr;
+	gamescene = new GameScene();
+	gamescene->Initialize(dxCommon,input);
 
-		//X,Y,Z全て[-0.05f,+0.05f]でランダムに分布
-		const float rnd_vel = 0.1f;
-		XMFLOAT3 vel{};
-		vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
-		vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
-		vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
-		//重力に見立ててYのみ[-0.001f,0]でランダムに分布
-		const float rnd_acc = 0.001f;
-		XMFLOAT3 acc{};
-		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
-
-		//色
-		const float rnd_color = 1.0f;
-		XMFLOAT4 color{  };
-		color.x = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-		color.y = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-		color.z = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-		color.w = (float)rand() / RAND_MAX * rnd_color - rnd_color / 2.0f;
-		//追加
-		particleManager->Add(600, pos, vel, acc, 1.0f, 0.0f, color);
-	}
-	particleManager->Update();
-
-	SpriteCommon* spriteCommon = nullptr;
-	//スプライト共通部の初期化
-	spriteCommon = new SpriteCommon;
-	spriteCommon->Initialize(dxCommon);
-
-
-	//基盤システムの初期化
-	spriteCommon->LoadTexture(0, "hit.png");
-	spriteCommon->LoadTexture(1, "mario.jpg");
-
-
-	//最初のシーンの初期化
-	Sprite* hitsprite = new Sprite();
-	hitsprite->Initialize(spriteCommon, 0);
-	Sprite* mariosprite = new Sprite();
-	mariosprite->Initialize(spriteCommon, 1);
-	mariosprite->SetPosition({ 800,0 });
-	mariosprite->Update();
-
-
-	/*OBJからモデルデータを読み込む*/
-	//球
-	XMFLOAT3 minsphereModel = {}, maxsphereModel = {};
-	Model* spheremodel = Model::LoadFromObj("Skydome", minsphereModel, maxsphereModel);
-	minsphereModel = spheremodel->GetminModel();
-	maxsphereModel = spheremodel->GetmaxModel();
-
-
-
-	//球
-	Object3d* sphereobj = Object3d::Create();
-	sphereobj->SetModel(spheremodel);
-	sphereobj->SetPosition({ 0,2,0 });
 
 	/*Camera* camera;
 	camera->Initialize(input);*/
-	XMFLOAT3 eye(0, 5, -30);	//視点座標
-	XMFLOAT3 target(0, 0, 0);	//注視点座標
-	XMFLOAT3 up(0, 1, 0);		//上方向ベクトル
-	XMMATRIX matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
 	//最初のシーンの初期化
 
 #ifdef _DEBUG
@@ -199,55 +130,25 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #endif
 	//ゲームループ
 	while (true) {
-		//　基盤システムの更新
-
-
 		//メッセージがある？
 		if (winApp->ProcessMesseage()) {
 			//ゲームループを抜ける
 			break;
 		}
-
-		//DirectX毎フレーム処理 ここから
-
 		//入力の更新
 		input->Update();
-
-		sphereobj->Update(matView);
-		
+		//ゲームシーン
+		gamescene->Update();
 		//// 4.描画コマンドここから
 
 		dxCommon->PreDraw();
 		
-		//最初のシーンの描画
-		Object3d::PreDraw(dxCommon->GetCommandlist());
-
-		sphereobj->Draw();
-
-		Object3d::PostDraw();
-
-
-		spriteCommon->PreDraw();
-
-
-		spriteCommon->PostDraw();
-
-		
-
-		//最初のシーンの描画
+		//ゲームシーン
+		gamescene->Draw();
 
 		dxCommon->PostDraw();
-
-
 		// 4.描画コマンドここまで
-
-
-		////DirectX毎フレーム処理 ここまで
 	}
-
-	//　基盤システムの終了
-
-
 	//入力開放
 	delete input;
 	//WindowsAPIの終了処理
@@ -256,12 +157,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	delete winApp;
 	//DirectX解放
 	delete dxCommon;
-	delete spriteCommon;
-	//3dオブジェクト解放
-	delete sphereobj;
-	//3Dモデル解放
-	delete spheremodel;
-	delete particleManager;
+	//GameScene解放
+	delete gamescene;
 	//カメラ解放
 	/*delete camera;*/
 	FbxLoader::GetInstance()->Finalize();
