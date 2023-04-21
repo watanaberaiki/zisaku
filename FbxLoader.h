@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "fbxsdk.h"
+#include "FbxModel.h"
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <string>
@@ -31,10 +32,16 @@ public:
 	/// </summary>
 	void Finalize();
 
-/// <summary>
-/// ファイルからFBXモデル読込
-/// </summary>
+	/// <summary>
+	/// ファイルからFBXモデル読込
+	/// </summary>
 	void LoadModelFromFile(const string& modelName);
+
+	/// <summary>
+	/// 再帰的にノード構成を解析
+	/// </summary>
+	void ParseNodeRecursive(FbxModel* fbxModel, FbxNode* fbxNode);
+
 private:
 	// privateなコンストラクタ（シングルトンパターン）
 	FbxLoader() = default;

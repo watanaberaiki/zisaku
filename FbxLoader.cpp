@@ -50,4 +50,27 @@ void FbxLoader::LoadModelFromFile(const string& modelName)
     FbxScene* fbxScene = FbxScene::Create(fbxManager, "fbxScene");
     //ファイルからロードしたFBXの情報をシーンにインポート
     fbxImporter->Import(fbxScene);
+
+    //モデル生成
+    FbxModel* fbxModel = new FbxModel();
+    fbxModel->name = modelName;
+    //ルートノードから順に解析してモデルに流し込む
+    ParseNodeRecursive(fbxModel, fbxScene->GetRootNode());
+    //FBXシーン解放
+    fbxScene->Destroy();
+
+}
+
+void FbxLoader::ParseNodeRecursive(FbxModel* fbxModel, FbxNode* fbxNode)
+{
+    //ノード名を取得
+    string name = fbxNode->GetName();
+    //モデルにノードを追加(Todo)
+    //FBXノードの情報を解析してノードに記録(Todo) 
+    //FBXノードのメッシュ情報を解析(Todo)
+
+    //子ノードに対して再帰呼び出し
+    for (int i = 0; i < fbxNode->GetChildCount(); i++) {
+        ParseNodeRecursive(fbxModel, fbxNode->GetChild(i));
+    }
 }
