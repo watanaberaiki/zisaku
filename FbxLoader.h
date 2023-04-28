@@ -40,7 +40,21 @@ public:
 	/// <summary>
 	/// 再帰的にノード構成を解析
 	/// </summary>
-	void ParseNodeRecursive(FbxModel* fbxModel, FbxNode* fbxNode,Node*parent=nullptr);
+	void ParseNodeRecursive(FbxModel* fbxModel, FbxNode* fbxNode, Node* parent = nullptr);
+
+	/// <summary>
+	/// メッシュ読み取り
+	/// </summary>
+	void ParseMesh(FbxModel* fbxModel, FbxNode* fbxNode);
+
+	//頂点座標読み取り
+	void ParseMeshVertices(FbxModel* fbxModel, FbxMesh* fbxMesh);
+	//面情報読み取り
+	void ParseMeshFaces(FbxModel* fbxModel, FbxMesh fbxMesh);
+	//マテリアル読み取り
+	void ParseMaterial(FbxModel* fbxModel, FbxNode fbxNode);
+	//テクスチャ読み込み
+	void LoadTexture(FbxModel* fbxModel, const std::string& fullpath);
 
 private:
 	// privateなコンストラクタ（シングルトンパターン）

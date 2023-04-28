@@ -23,6 +23,14 @@ struct Node
 #pragma once
 class FbxModel
 {
+public:		//サブクラス
+	//頂点データ構造体
+	struct VertexPosNormalUv
+	{
+		DirectX::XMFLOAT3 pos;		//xyz座標
+		DirectX::XMFLOAT3 normal;	//法線ベクトル
+		DirectX::XMFLOAT2 uv;		//uv座標
+	};
 public:
 	friend class FbxLoader;
 private:
@@ -30,5 +38,11 @@ private:
 	std::string name;
 	//ノード配列
 	std::vector<Node> nodes;
+	//メッシュを持つノード
+	Node* meshNode = nullptr;
+	//頂点データ配列
+	std::vector<VertexPosNormalUv> vertices;
+	//頂点インデックス配列
+	std::vector<unsigned short>indices;
 };
 
