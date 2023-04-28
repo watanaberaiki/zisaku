@@ -13,6 +13,8 @@ private://エイリアス
 public://定数
 	//モデル格納ルートパス
 	static const string baseDirectory;
+	//テクスチャがない場合の標準テクスチャファイル名
+	static const string defaultTextureFileName;
 
 public:
 	/// <summary>
@@ -50,11 +52,13 @@ public:
 	//頂点座標読み取り
 	void ParseMeshVertices(FbxModel* fbxModel, FbxMesh* fbxMesh);
 	//面情報読み取り
-	void ParseMeshFaces(FbxModel* fbxModel, FbxMesh fbxMesh);
+	void ParseMeshFaces(FbxModel* fbxModel, FbxMesh* fbxMesh);
 	//マテリアル読み取り
-	void ParseMaterial(FbxModel* fbxModel, FbxNode fbxNode);
+	void ParseMaterial(FbxModel* fbxModel, FbxNode* fbxNode);
 	//テクスチャ読み込み
 	void LoadTexture(FbxModel* fbxModel, const std::string& fullpath);
+	//ディレクトリを含んだファイルパスからファイル名を注室する
+	std::string ExtractFileName(const std::string& path);
 
 private:
 	// privateなコンストラクタ（シングルトンパターン）
