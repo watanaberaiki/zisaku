@@ -75,6 +75,25 @@ private:
 	DirectX::TexMetadata metadata = {};
 	//スクラッチイメージ
 	DirectX::ScratchImage scratchImg = {};
+	// 頂点バッファ
+	ComPtr<ID3D12Resource> vertBuff;
+	// インデックスバッファ
+	ComPtr<ID3D12Resource> indexBuff;
+	// テクスチャバッファ
+	ComPtr<ID3D12Resource> texbuff;
+	// 頂点バッファビュー
+	D3D12_VERTEX_BUFFER_VIEW vbView = {};
+	// インデックスバッファビュー
+	D3D12_INDEX_BUFFER_VIEW ibView = {};
+	//SRV用デスクリプタヒープ
+	ComPtr<ID3D12DescriptorHeap>descHeapSRV;
 
+public:
+	//バッファ生成
+	void CreateBuffers(ID3D12Device* device);
+	//描画
+	void Draw(ID3D12GraphicsCommandList* cmdList);
+	//モデルの変形行列取得
+	const XMMATRIX& GetModelTransform() { return meshNode->gloabalTransform; }
 };
 

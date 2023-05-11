@@ -2,12 +2,17 @@
 #include <d3dx12.h>
 #include <DirectXMath.h>
 #include <d3d12.h>
+#include <Windows.h>
+#include<wrl.h>
+
+
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 class Model
 {
+
 public:
 	//OBJファイルから3Dモデルを読み込む
 	static Model* LoadFromObj(const std::string& modelname);
