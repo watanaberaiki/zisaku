@@ -80,7 +80,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	//球オブジェクト
 	sphereobj = Object3d::Create();
 	sphereobj->SetModel(spheremodel);
-	sphereobj->SetPosition({ 0,2,0 });
+	sphereobj->SetPosition({ 0,1,-10 });
 
 	eye =XMFLOAT3(0, 5, -30);	//視点座標
 	target = XMFLOAT3(0, 0, 0);	//注視点座標
