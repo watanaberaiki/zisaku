@@ -6,9 +6,12 @@ using namespace DirectX;
 
 class Camera
 {
+
 public:
 	void Initialize(Input* input);
 	void Update();
+
+	/*static void SetInput(Input* input) { Camera::input = input; }*/
 
 public:
 	/// <summary>
@@ -51,11 +54,12 @@ public:
 
 private:
 	XMMATRIX matView;
-	XMFLOAT3 eye;		//視点座標
-	XMFLOAT3 target;	//注視点座標
-	XMFLOAT3 up;		//上方向ベクトル
+	XMFLOAT3 eye = {};		//視点座標
+	XMFLOAT3 target = {};	//注視点座標
+	XMFLOAT3 up = {};		//上方向ベクトル
 	XMMATRIX matProjection;
 
-	Input* input = nullptr;
+	//キーボード
+	Input* input;
 };
 

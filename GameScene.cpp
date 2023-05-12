@@ -12,6 +12,8 @@ GameScene::~GameScene()
 	//3Dモデル解放
 	delete spheremodel;
 	delete particleManager;
+	delete object1;
+	delete model1;
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
@@ -20,7 +22,31 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	this->input_ = input;
 
 	//モデル名を指定してファイル読み込み
-	FbxLoader::GetInstance()->LoadModelFromFile("cube");
+	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
+	model1=FbxLoader::GetInstance()->LoadModelFromFile("cube");
+
+	eye = XMFLOAT3(0, 0, -100);	//視点座標
+	target = XMFLOAT3(0, 0, 0);	//注視点座標
+	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
+	//カメラ
+	camera = new Camera();
+	camera->Initialize(input_);
+	camera->SetEye(eye);
+	camera->SetTarget(target);
+	camera->SetUp(up);
+	camera->Update();
+
+	//デバイスをセット
+	FbxObject3D::SetDevice(dxCommon_->GetDevice());
+	//カメラをセット
+	FbxObject3D::SetCamera(camera);
+	//グラフィックスパイプライン生成
+	FbxObject3D::CreateGraphicsPipeline();
+
+	//3Dオブジェクト生成とモデルのセット
+	object1 = new FbxObject3D();
+	object1->Initialize();
+	object1->SetModel(model1);
 
 	//パーティクル
 	particleManager->Initialize("effect1.png");
@@ -80,17 +106,19 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	//球オブジェクト
 	sphereobj = Object3d::Create();
 	sphereobj->SetModel(spheremodel);
-	sphereobj->SetPosition({ 0,2,0 });
-
-	eye =XMFLOAT3(0, 5, -30);	//視点座標
-	target = XMFLOAT3(0, 0, 0);	//注視点座標
-	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
-	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+	sphereobj->SetPosition({ 0,20,0 });
 }
 
 void GameScene::Update()
 {
+	camera->SetEye(eye);
+	camera->SetTarget(target);
+	camera->SetUp(up);
+	camera->Update();
+	matView=camera->GetmatView();
 	sphereobj->Update(matView);
+
+	object1->Update();
 }
 
 void GameScene::Draw()
@@ -98,9 +126,13 @@ void GameScene::Draw()
 	//オブジェクト描画
 	Object3d::PreDraw(dxCommon_->GetCommandlist());
 
-	sphereobj->Draw();
+	/*sphereobj->Draw();*/
 
 	Object3d::PostDraw();
+
+
+	//3Dオブジェクトの描画
+	object1->Draw(dxCommon_->GetCommandlist());
 
 	//スプライト描画
 	spriteCommon->PreDraw();

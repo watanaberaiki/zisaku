@@ -45,11 +45,13 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
 	//頂点インデックス全体のサイズ
 	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * indices.size());
 
+	resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
+
 	// インデックスバッファ生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapProps,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeIB),
+		&resourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&indexBuff)
@@ -83,9 +85,11 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
 			(UINT16)metadata.mipLevels
 		);
 
+
+	heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 	// テクスチャ用バッファの生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK,D3D12_MEMORY_POOL_L0),
+		&heapProps,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
@@ -126,4 +130,15 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
 
 void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
 {
+	//頂点バッファをセット(VBV)
+	cmdList->IASetVertexBuffers(0, 1, &vbView);
+	//インデックスバッファをセット(IBV)
+	cmdList->IASetIndexBuffer(&ibView);
+	//デスクリプタヒープのセット
+	ID3D12DescriptorHeap* ppHeaps[] = { descHeapSRV.Get() };
+	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+	//シェーダリソースビューをセット
+	cmdList->SetGraphicsRootDescriptorTable(1, descHeapSRV->GetGPUDescriptorHandleForHeapStart());
+	//描画コマンド
+	cmdList->DrawIndexedInstanced((UINT)indices.size(),1, 0, 0, 0);
 }
