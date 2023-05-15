@@ -12,8 +12,8 @@ GameScene::~GameScene()
 	//3Dモデル解放
 	delete spheremodel;
 	delete particleManager;
-	delete object1;
-	delete model1;
+	FBX_SAFE_DELETE(model1);
+	FBX_SAFE_DELETE(object1);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
@@ -23,9 +23,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 	//モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
-	model1=FbxLoader::GetInstance()->LoadModelFromFile("cube");
+	model1=FbxLoader::GetInstance()->LoadModelFromFile("spherefbx");
 
-	eye = XMFLOAT3(0, 0, -100);	//視点座標
+	eye = XMFLOAT3(0, 0, 300);	//視点座標
 	target = XMFLOAT3(0, 0, 0);	//注視点座標
 	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
 	//カメラ
@@ -47,6 +47,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	object1 = new FbxObject3D();
 	object1->Initialize();
 	object1->SetModel(model1);
+	object1->Update();
 
 	//パーティクル
 	particleManager->Initialize("effect1.png");
@@ -127,12 +128,13 @@ void GameScene::Draw()
 	Object3d::PreDraw(dxCommon_->GetCommandlist());
 
 	/*sphereobj->Draw();*/
+	//3Dオブジェクトの描画
+	object1->Draw(dxCommon_->GetCommandlist());
 
 	Object3d::PostDraw();
 
 
-	//3Dオブジェクトの描画
-	object1->Draw(dxCommon_->GetCommandlist());
+	
 
 	//スプライト描画
 	spriteCommon->PreDraw();

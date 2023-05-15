@@ -57,6 +57,10 @@ public://メンバ関数
 	///セッター
 	//モデルのセット
 	void SetModel(FbxModel* fbxModel) { this->fbxModel = fbxModel; }
+	void SetPosition(XMFLOAT3 position) { this->position = position; }
+
+	//ゲッター
+
 protected:	//メンバ変数
 	//定数バッファ
 	ComPtr<ID3D12Resource>constBuffTransform;

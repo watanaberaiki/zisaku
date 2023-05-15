@@ -5,15 +5,6 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
 	HRESULT result;
 	//頂点データ全体のサイズ
 	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUv) * vertices.size());
-	////頂点バッファ生成
-	//result = device->CreateCommittedResource(
-	//	&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-	//	D3D12_HEAP_FLAG_NONE,
-	//	&CD3DX12_RESOURCE_DESC::Buffer(sizeVB),
-	//	D3D12_RESOURCE_STATE_GENERIC_READ,
-	//	nullptr,
-	//	IID_PPV_ARGS(&vertBuff));
-
 	// ヒーププロパティ
 	CD3DX12_HEAP_PROPERTIES heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	// リソース設定
@@ -74,7 +65,6 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
 	const DirectX::Image* img = scratchImg.GetImage(0, 0, 0);	//生データ抽出
 	assert(img);
 
-	//リソース設定
 	// リソース設定
 	CD3DX12_RESOURCE_DESC texresDesc =
 		CD3DX12_RESOURCE_DESC::Tex2D(
