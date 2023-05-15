@@ -35,6 +35,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	camera->SetTarget(target);
 	camera->SetUp(up);
 	camera->Update();
+	//カメラをセット
+	Object3d::SetCamera(camera);
 
 	//デバイスをセット
 	FbxObject3D::SetDevice(dxCommon_->GetDevice());
@@ -99,7 +101,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	mariosprite->Update();
 
 	//3Dオブジェクト
-	spheremodel = Model::LoadFromObj("Skydome");
+	spheremodel = Model::LoadFromObj("sphere");
 	//当たり判定
 	minsphereModel = spheremodel->GetminModel();
 	maxsphereModel = spheremodel->GetmaxModel();
@@ -127,9 +129,9 @@ void GameScene::Draw()
 	//オブジェクト描画
 	Object3d::PreDraw(dxCommon_->GetCommandlist());
 
-	/*sphereobj->Draw();*/
-	//3Dオブジェクトの描画
-	object1->Draw(dxCommon_->GetCommandlist());
+	sphereobj->Draw();
+	////3Dオブジェクトの描画
+	//object1->Draw(dxCommon_->GetCommandlist());
 
 	Object3d::PostDraw();
 

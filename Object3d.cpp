@@ -41,7 +41,7 @@ D3D12_INDEX_BUFFER_VIEW Object3d::ibView{};
 
 std::vector<Object3d::VertexPosNormalUv>Object3d::vertices;
 std::vector<unsigned short>Object3d::indices;
-
+Camera* Object3d::camera = nullptr;
 Object3d::Material Object3d::material;
 
 void Object3d::StaticInitialize(ID3D12Device * device, int window_width, int window_height)
@@ -651,12 +651,15 @@ void Object3d::Update(XMMATRIX &matView)
 		// 親オブジェクトのワールド行列を掛ける
 		matWorld *= parent->matWorld;
 	}
-
+	//カメラ座標
+	const XMFLOAT3& cameraPos = camera->GetEye();
 	// 定数バッファへデータ転送
 	ConstBufferDataB0* constMap = nullptr;
 	result = constBuffB0->Map(0, nullptr, (void**)&constMap);
 	/*constMap->color = color;*/
 	constMap->mat = matWorld * matView * matProjection;	// 行列の合成
+	constMap->cameraPos = cameraPos;
+	constMap->world = matWorld;
 	constBuffB0->Unmap(0, nullptr);
 
 

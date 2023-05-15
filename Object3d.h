@@ -7,6 +7,8 @@
 #include <d3dx12.h>
 #include<string.h>
 #include "Model.h"
+#include"FbxModel.h"
+#include"Camera.h"
 
 /// <summary>
 /// 3Dオブジェクト
@@ -36,6 +38,8 @@ public: // サブクラス
 	{
 		//XMFLOAT4 color;	// 色 (RGBA)
 		XMMATRIX mat;	// ３Ｄ変換行列
+		XMFLOAT3 cameraPos;		//カメラ座標(ワールド座標)
+		XMMATRIX world;			//ワールド行列
 	};
 
 	struct ConstBufferDataB1 {
@@ -104,6 +108,9 @@ public: // 静的メンバ関数
 	/// <param name="position">座標</param>
 	static void SetTarget(XMFLOAT3 target);
 
+
+	static void SetCamera(Camera* camera) { Object3d::camera = camera; }
+
 	/// <summary>
 	/// ベクトルによる移動
 	/// </summary>
@@ -114,6 +121,8 @@ public: // 静的メンバ関数
 	/// モデルのセッター
 	/// </summary>
 	void SetModel(Model* model) { this->model = model;}
+
+	
 private: // 静的メンバ変数
 	// デバイス
 	static ID3D12Device* device;
@@ -159,6 +168,8 @@ private: // 静的メンバ変数
 	/*static unsigned short indices[planeCount * 3];*/
 	static std::vector<unsigned short>indices;
 
+	//カメラ
+	static Camera* camera;
 private:// 静的メンバ関数
 	/// <summary>
 	/// デスクリプタヒープの初期化
