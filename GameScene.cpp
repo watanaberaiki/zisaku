@@ -112,9 +112,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 void GameScene::Update()
 {
-	camera->SetEye(eye);
+	/*camera->SetEye(eye);
 	camera->SetTarget(target);
-	camera->SetUp(up);
+	camera->SetUp(up);*/
 	camera->Update();
 	matView=camera->GetmatView();
 	sphereobj->Update(matView);

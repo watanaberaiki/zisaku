@@ -12,6 +12,7 @@
 
 class FbxObject3D
 {
+
 protected:	//エイリアス
 	//Microsoft::WRL::を省略
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -29,6 +30,7 @@ public:	//サブクラス
 		XMMATRIX world;			//ワールド行列
 		XMFLOAT3 cameraPos;		//カメラ座標(ワールド座標)
 	};
+
 
 public:	//静的メンバ関数
 	//setter
