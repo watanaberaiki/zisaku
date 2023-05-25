@@ -23,9 +23,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 	//モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
-	model1=FbxLoader::GetInstance()->LoadModelFromFile("spherefbx");
+	model1=FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
 
-	eye = XMFLOAT3(0, 0, 300);	//視点座標
+	eye = XMFLOAT3(0, 0, -1);	//視点座標
 	target = XMFLOAT3(0, 0, 0);	//注視点座標
 	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
 	//カメラ
@@ -120,6 +120,7 @@ void GameScene::Update()
 	sphereobj->Update(matView);
 
 	object1->Update();
+	hitsprite->Update();
 }
 
 void GameScene::Draw()
@@ -138,7 +139,7 @@ void GameScene::Draw()
 
 	//スプライト描画
 	spriteCommon->PreDraw();
-
+	/*hitsprite->Draw();*/
 
 	spriteCommon->PostDraw();
 }

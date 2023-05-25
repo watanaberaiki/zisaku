@@ -9,6 +9,7 @@
 #include<d3dx12.h>
 #include<DirectXMath.h>
 #include<string>
+#include"FbxLoader.h"
 
 class FbxObject3D
 {
@@ -21,6 +22,9 @@ protected:	//エイリアス
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMMATRIX = DirectX::XMMATRIX;
+	//定数
+	//ボーンの最大数
+	static const int MAX_BONES = 32;
 
 public:	//サブクラス
 	//定数バッファ用データ構造体
@@ -30,7 +34,11 @@ public:	//サブクラス
 		XMMATRIX world;			//ワールド行列
 		XMFLOAT3 cameraPos;		//カメラ座標(ワールド座標)
 	};
-
+	//定数バッファ用構造体(スキニング)
+	struct ConstBufferDataSkin 
+	{
+		XMMATRIX bones[MAX_BONES];
+	};
 
 public:	//静的メンバ関数
 	//setter
@@ -66,8 +74,10 @@ public://メンバ関数
 protected:	//メンバ変数
 	//定数バッファ
 	ComPtr<ID3D12Resource>constBuffTransform;
+	//定数バッファ(スキン)
+	ComPtr<ID3D12Resource>constBuffSkin;
 	//ローカルスケール
-	XMFLOAT3 scale = { 1,1,1 };
+	XMFLOAT3 scale = { 0.1,0.1,0.1 };
 	//X,Y,Z軸周りのローカル回転角
 	XMFLOAT3 rotation = { 0,0,0 };
 	//ローカル座標
