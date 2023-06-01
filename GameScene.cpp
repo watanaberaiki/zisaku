@@ -23,10 +23,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 	//モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
-	model1=FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
+	model1=FbxLoader::GetInstance()->LoadModelFromFile("boneTest","Resources/white1x1.png");
 
-	eye = XMFLOAT3(0, 0, -1);	//視点座標
-	target = XMFLOAT3(0, 0, 0);	//注視点座標
+	eye = XMFLOAT3(0, 5, -20);	//視点座標
+	target = XMFLOAT3(0, 5, 0);	//注視点座標
 	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
 	//カメラ
 	camera = new Camera();
@@ -139,7 +139,7 @@ void GameScene::Draw()
 
 	//スプライト描画
 	spriteCommon->PreDraw();
-	/*hitsprite->Draw();*/
+	hitsprite->Draw();
 
 	spriteCommon->PostDraw();
 }

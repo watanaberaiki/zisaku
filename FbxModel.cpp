@@ -9,32 +9,31 @@ FbxModel::~FbxModel()
 void FbxModel::CreateBuffers(ID3D12Device* device)
 {
 	HRESULT result;
+
 	//頂点データ全体のサイズ
-	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUvSkin) * vertices.size());
-	// ヒーププロパティ
-	CD3DX12_HEAP_PROPERTIES heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	// リソース設定
-	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
-	// 頂点バッファ生成
+	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUvSkin)) * vertices.size();
+
+	//頂点バッファ生成
+	CD3DX12_HEAP_PROPERTIES v1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC v2 = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
 	result = device->CreateCommittedResource(
-		&heapProps,
+		&v1,
 		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
+		&v2,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&vertBuff)
-	);
-	assert(SUCCEEDED(result));
+		IID_PPV_ARGS(&vertBuff));
 
-	// 頂点バッファへのデータ転送
+	//頂点バッファへのデータ転送
 	VertexPosNormalUvSkin* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
-	if (SUCCEEDED(result)) {
+	if (SUCCEEDED(result))
+	{
 		std::copy(vertices.begin(), vertices.end(), vertMap);
 		vertBuff->Unmap(0, nullptr);
 	}
 
-	// 頂点バッファビューの作成
+	//頂点バッファビューの生成
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
 	vbView.StrideInBytes = sizeof(vertices[0]);
@@ -42,19 +41,18 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
 	//頂点インデックス全体のサイズ
 	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * indices.size());
 
-	resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
-
-	// インデックスバッファ生成
+	//インデックスバッファ生成
+	v1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	v2 = CD3DX12_RESOURCE_DESC::Buffer(sizeIB);
 	result = device->CreateCommittedResource(
-		&heapProps,
+		&v1,
 		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
+		&v2,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&indexBuff)
-	);
+		IID_PPV_ARGS(&indexBuff));
 
-	// インデックスバッファへのデータ転送
+	//インデックスバッファへのデータ転送
 	unsigned short* indexMap = nullptr;
 	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
 	if (SUCCEEDED(result)) {
@@ -62,79 +60,77 @@ void FbxModel::CreateBuffers(ID3D12Device* device)
 		indexBuff->Unmap(0, nullptr);
 	}
 
-	// インデックスバッファビューの作成
+	//インデックスバッファビューの作成
 	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
 	ibView.Format = DXGI_FORMAT_R16_UINT;
 	ibView.SizeInBytes = sizeIB;
 
-	//テクスチャ画像データ
-	const DirectX::Image* img = scratchImg.GetImage(0, 0, 0);	//生データ抽出
+	//テクスチャの画像データ
+	const DirectX::Image* img = scratchImg.GetImage(0, 0, 0);
 	assert(img);
 
-	// リソース設定
-	CD3DX12_RESOURCE_DESC texresDesc =
-		CD3DX12_RESOURCE_DESC::Tex2D(
-			metadata.format,
-			metadata.width,
-			(UINT)metadata.height,
-			(UINT16)metadata.arraySize,
-			(UINT16)metadata.mipLevels
-		);
+	//リソース設定
+	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+		metadata.format,
+		metadata.width,
+		(UINT)metadata.height,
+		(UINT16)metadata.arraySize,
+		(UINT16)metadata.mipLevels
+	);
 
-
-	heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
-	// テクスチャ用バッファの生成
+	//テクスチャ用バッファの生成
+	v1 = CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 	result = device->CreateCommittedResource(
-		&heapProps,
+		&v1,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ, // テクスチャ用指定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&texbuff)
-	);
+		IID_PPV_ARGS(&texBuff));
 
 	//テクスチャバッファにデータ転送
-	result = texbuff->WriteToSubresource(
+	result = texBuff->WriteToSubresource(
 		0,
-		nullptr,	//全領域へコピー
-		img->pixels,	//元データアドレス
-		(UINT)img->rowPitch,	//1ラインサイズ
-		(UINT)img->slicePitch	//1枚サイズ
+		nullptr,
+		img->pixels,
+		(UINT)img->rowPitch,
+		(UINT)img->slicePitch
 	);
 
-	//SRV用デスクリプタヒープを生成	
+	//SRV用デスクリプタヒープを生成
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
-	descHeapDesc.NumDescriptors = 1; // シェーダーリソースビュー1つ
-	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeapSRV));//生成
+	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	descHeapDesc.NumDescriptors = 2;
+	result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeapSRV));
 
-	//シェーダーリソースビュー(SRV)作成
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{}; // 設定構造体
-	D3D12_RESOURCE_DESC resDesc = texbuff->GetDesc();
-
+	//シェーダリソースビュー作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	D3D12_RESOURCE_DESC resDesc = texBuff->GetDesc();
 	srvDesc.Format = resDesc.Format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
-
-	device->CreateShaderResourceView(texbuff.Get(), //ビューと関連付けるバッファ
-		&srvDesc, //テクスチャ設定情報
-		descHeapSRV->GetCPUDescriptorHandleForHeapStart()//ヒープの先頭アドレス
+	device->CreateShaderResourceView(
+		texBuff.Get(),
+		&srvDesc,
+		descHeapSRV->GetCPUDescriptorHandleForHeapStart()
 	);
 }
 
 void FbxModel::Draw(ID3D12GraphicsCommandList* cmdList)
 {
-	//頂点バッファをセット(VBV)
+	//頂点バッファをセット
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
-	//インデックスバッファをセット(IBV)
+	//インデックスバッファをセット
 	cmdList->IASetIndexBuffer(&ibView);
+
 	//デスクリプタヒープのセット
 	ID3D12DescriptorHeap* ppHeaps[] = { descHeapSRV.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 	//シェーダリソースビューをセット
 	cmdList->SetGraphicsRootDescriptorTable(1, descHeapSRV->GetGPUDescriptorHandleForHeapStart());
+
 	//描画コマンド
 	cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);
 }

@@ -51,7 +51,7 @@ public:
 	void SetUp(XMFLOAT3 up) { this->up = up; };
 
 	const XMMATRIX& GetmatView() { return matView; }
-	const XMMATRIX& GetmatViewProjection() { return matView * matProjection; }
+	const XMMATRIX& GetmatViewProjection() { return (matProjection*matView); }
 
 private:
 	XMMATRIX matView;
