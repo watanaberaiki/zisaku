@@ -20,7 +20,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 {
 	this->dxCommon_ = dxCommon;
 	this->input_ = input;
-
+ 
 	//モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
 	model1=FbxLoader::GetInstance()->LoadModelFromFile("spherefbx");

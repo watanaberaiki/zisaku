@@ -1,46 +1,8 @@
 #include "Input.h"
 #include"WinApp.h"
 #include"DirectXCommon.h"
-#include "CollisionPrimitive.h"
-#include "Collision.h"
-#include"Camera.h"
 #include"FbxLoader.h"
-
 #include"GameScene.h"
-
-#pragma comment (lib,"d3dcompiler.lib")
-
-enum Scene {
-	title,
-	game,
-	clear,
-	gameover
-};
-
-bool CheakCollision(XMFLOAT3 posA, XMFLOAT3 posB, XMFLOAT3 sclA, XMFLOAT3 sclB, XMFLOAT3 minModelA, XMFLOAT3 minModelB, XMFLOAT3 maxModelA, XMFLOAT3 maxModelB) {
-
-	XMFLOAT3 minposA = { sclA.x * minModelA.x,sclA.y * minModelA.y,sclA.z * minModelA.z };
-	XMFLOAT3 minposB = { sclB.x * minModelB.x,sclB.y * minModelB.y,sclB.z * minModelB.z };
-	XMFLOAT3 maxposA = { sclA.x * maxModelA.x,sclA.y * maxModelA.y,sclA.z * maxModelA.z };
-	XMFLOAT3 maxposB = { sclB.x * maxModelB.x,sclB.y * maxModelB.y,sclB.z * maxModelB.z };
-
-	minposA = { fabsf(minposA.x),fabsf(minposA.y),fabsf(minposA.z) };
-	minposB = { fabsf(minposB.x),fabsf(minposB.y),fabsf(minposB.z) };
-	maxposA = { fabsf(maxposA.x),fabsf(maxposA.y),fabsf(maxposA.z) };
-	maxposB = { fabsf(maxposB.x),fabsf(maxposB.y),fabsf(maxposB.z) };
-
-	/*sclA = { sclA.x * a,sclA.y * a ,sclA.z * a };
-	sclB = { sclB.x * a,sclB.y * a ,sclB.z * a };*/
-
-	if (posA.x - minposA.x < posB.x + maxposB.x && posA.x + maxposA.x > posB.x - minposB.x &&
-		posA.y - minposA.y < posB.y + maxposB.y && posA.y + maxposA.y > posB.y - minposB.y &&
-		posA.z - minposA.z < posB.z + maxposB.z && posA.z + maxposA.z > posB.z - minposB.z)
-	{
-		return true;
-	}
-
-	return false;
-}
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -109,10 +71,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	gamescene = new GameScene();
 	gamescene->Initialize(dxCommon,input);
 
-
-	/*Camera* camera;
-	camera->Initialize(input);*/
-
 	//最初のシーンの初期化
 
 #ifdef _DEBUG
@@ -149,8 +107,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	delete dxCommon;
 	//GameScene解放
 	delete gamescene;
-	//カメラ解放
-	/*delete camera;*/
+	//FBX解放
 	FbxLoader::GetInstance()->Finalize();
 	//基盤システムの終了
 
