@@ -23,10 +23,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 	//モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
-	model1=FbxLoader::GetInstance()->LoadModelFromFile("boneTest","Resources/white1x1.png");
 
-	eye = XMFLOAT3(0, 5, -20);	//視点座標
-	target = XMFLOAT3(0, 5, 0);	//注視点座標
+	eye = XMFLOAT3(0, 5, 20);	//視点座標
+	target = XMFLOAT3(0, 0, 0);	//注視点座標
 	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
 	//カメラ
 	camera = new Camera();
@@ -42,6 +41,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	FbxObject3D::SetCamera(camera);
 	//グラフィックスパイプライン生成
 	FbxObject3D::CreateGraphicsPipeline();
+
+	model1 = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
 
 	//3Dオブジェクト生成とモデルのセット
 	object1 = new FbxObject3D();
@@ -125,16 +126,16 @@ void GameScene::Update()
 
 void GameScene::Draw()
 {
-	//オブジェクト描画
-	Object3d::PreDraw(dxCommon_->GetCommandlist());
+	////オブジェクト描画
+	//Object3d::PreDraw(dxCommon_->GetCommandlist());
 
-	/*sphereobj->Draw();*/
-	//3Dオブジェクトの描画
+	///*sphereobj->Draw();*/
+	////3Dオブジェクトの描画
+	//
+
+	//Object3d::PostDraw();
+
 	object1->Draw(dxCommon_->GetCommandlist());
-
-	Object3d::PostDraw();
-
-
 	
 
 	//スプライト描画

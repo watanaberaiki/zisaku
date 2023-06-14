@@ -110,9 +110,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	gamescene->Initialize(dxCommon,input);
 
 
-	/*Camera* camera;
-	camera->Initialize(input);*/
-
 	//Å‰‚ÌƒV[ƒ“‚Ì‰Šú‰»
 
 #ifdef _DEBUG
