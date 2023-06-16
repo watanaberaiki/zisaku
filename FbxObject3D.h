@@ -9,7 +9,6 @@
 #include "d3dx12.h"
 #include "DirectXMath.h"
 #include "string.h"
-//#include "LightGroup.h"
 
 class FbxObject3D
 {
@@ -43,12 +42,10 @@ public:	//静的メンバ関数
 	//セッター
 	static void SetDevice(ID3D12Device* device) { FbxObject3D::device = device; }
 	static void SetCamera(Camera* camera) { FbxObject3D::camera = camera; }
-	/*static void SetLightGroup(LightGroup* lightGroup) { FbxObject3D::lightGroup = lightGroup; }*/
 
 private://静的メンバ変数
 	static ID3D12Device* device;
 	static Camera* camera;
-	/*static LightGroup* lightGroup;*/
 
 public://メンバ関数
 	//初期化

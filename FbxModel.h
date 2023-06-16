@@ -137,3 +137,4 @@ public:
 	//getter
 	FbxScene* GetFbxScene() { return fbxScene; }
 };
+

@@ -9,8 +9,10 @@ GameScene::~GameScene()
 	delete spriteCommon;
 	//3dオブジェクト解放
 	delete sphereobj;
+	delete blockobj;
 	//3Dモデル解放
 	delete spheremodel;
+	delete blockmodel;
 	delete particleManager;
 	FBX_SAFE_DELETE(model1);
 	FBX_SAFE_DELETE(object1);
@@ -24,7 +26,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	//モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
 
-	eye = XMFLOAT3(0, 5, 20);	//視点座標
+	eye = XMFLOAT3(0, 0, -200);	//視点座標
 	target = XMFLOAT3(0, 0, 0);	//注視点座標
 	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
 	//カメラ
@@ -42,12 +44,13 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	//グラフィックスパイプライン生成
 	FbxObject3D::CreateGraphicsPipeline();
 
-	model1 = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
+	model1 = FbxLoader::GetInstance()->LoadModelFromFile("boneTest","Resources/white1x1.png");
 
 	//3Dオブジェクト生成とモデルのセット
 	object1 = new FbxObject3D();
 	object1->Initialize();
 	object1->SetModel(model1);
+	object1->SetPosition({ 0,0,0 });
 	object1->Update();
 
 	//パーティクル
@@ -99,26 +102,33 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	mariosprite->SetPosition({ 800,0 });
 	mariosprite->Update();
 
-	//3Dオブジェクト
+	//3Dモデル
 	spheremodel = Model::LoadFromObj("Skydome");
+	blockmodel = Model::LoadFromObj("redcube");
 	//当たり判定
 	minsphereModel = spheremodel->GetminModel();
 	maxsphereModel = spheremodel->GetmaxModel();
 
-	//球オブジェクト
+	//球
 	sphereobj = Object3d::Create();
 	sphereobj->SetModel(spheremodel);
-	sphereobj->SetPosition({ 0,20,0 });
+	sphereobj->SetPosition({ 0,0,0 });
+
+	//ブロック
+	blockobj = Object3d::Create();
+	blockobj->SetModel(blockmodel);
+	blockobj->SetPosition({ 5,0,0 });
+
 }
 
 void GameScene::Update()
 {
-	/*camera->SetEye(eye);
-	camera->SetTarget(target);
-	camera->SetUp(up);*/
 	camera->Update();
 	matView=camera->GetmatView();
+	//球
 	sphereobj->Update(matView);
+	//ブロック
+	blockobj->Update(matView);
 
 	object1->Update();
 	hitsprite->Update();
@@ -126,16 +136,17 @@ void GameScene::Update()
 
 void GameScene::Draw()
 {
-	////オブジェクト描画
-	//Object3d::PreDraw(dxCommon_->GetCommandlist());
+	//オブジェクト描画
+	Object3d::PreDraw(dxCommon_->GetCommandlist());
 
-	///*sphereobj->Draw();*/
 	////3Dオブジェクトの描画
-	//
-
-	//Object3d::PostDraw();
-
+	//sphereobj->Draw();
+	//blockobj->Draw();
 	object1->Draw(dxCommon_->GetCommandlist());
+	Object3d::PostDraw();
+
+	
+	//object1->Draw(dxCommon_->GetCommandlist());
 	
 
 	//スプライト描画

@@ -11,11 +11,26 @@ void Camera::Initialize(Input* input) {
 }
 
 void Camera::Update() {
-	if (input->PushKey(DIK_LEFT)) {
-		eye.x -= 1.0;
+	if (input->PushKey(DIK_LEFT) || input->PushKey(DIK_RIGHT)) {
+		if (input->PushKey(DIK_LEFT)) {
+			eye.x -= 1.0;
+			target.x -= 1.0;
+		}
+		else if (input->PushKey(DIK_RIGHT)) {
+			eye.x += 1.0;
+			target.x += 1.0;
+		}
 	}
-	else if (input->PushKey(DIK_RIGHT)) {
-		eye.x += 1.0;
+
+	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN)) {
+		if (input->PushKey(DIK_UP)) {
+			eye.y += 1.0;
+			target.y += 1.0;
+		}
+		else if (input->PushKey(DIK_DOWN)) {
+			eye.y -= 1.0;
+			target.y -= 1.0;
+		}
 	}
 	//ビュー変換行列の計算
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));

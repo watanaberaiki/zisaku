@@ -45,12 +45,16 @@ private:
 	Sprite* mariosprite = new Sprite();
 	
 	/*OBJからモデルデータを読み込む*/
-	//球
+	//3Dモデル
 	Model* spheremodel=nullptr;
-	//当たり判定用
+	Model* blockmodel = nullptr;
+	//3Dモデルの当たり判定
 	XMFLOAT3 minsphereModel = {}, maxsphereModel = {};
-	//球
+	
+	//3Dオブジェクト
 	Object3d* sphereobj=nullptr;
+	Object3d* blockobj = nullptr;
+
 	//カメラ
 	Camera* camera = nullptr;
 
