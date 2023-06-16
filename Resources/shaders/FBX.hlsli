@@ -19,5 +19,4 @@ struct VSOutput
 	float4 svpos : SV_POSITION;	//システム用頂点座標
 	float3 normal:NORMAL;		//法線
 	float2 uv	:TEXCOORD;		//uv値
-	/*float3 worldPosition :TEXCOORD1;*/
 };

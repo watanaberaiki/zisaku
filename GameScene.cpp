@@ -23,9 +23,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
  
 	//モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
-	model1=FbxLoader::GetInstance()->LoadModelFromFile("spherefbx");
+	model1=FbxLoader::GetInstance()->LoadModelFromFile("cube");
 
-	eye = XMFLOAT3(0, 0, 300);	//視点座標
+	eye = XMFLOAT3(0, 0, -300);	//視点座標
 	target = XMFLOAT3(0, 0, 0);	//注視点座標
 	up = XMFLOAT3(0, 1, 0);		//上方向ベクトル
 	//カメラ
@@ -112,9 +112,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 void GameScene::Update()
 {
-	/*camera->SetEye(eye);
-	camera->SetTarget(target);
-	camera->SetUp(up);*/
 	camera->Update();
 	matView=camera->GetmatView();
 	sphereobj->Update(matView);
