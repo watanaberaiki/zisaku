@@ -32,6 +32,16 @@ void Camera::Update() {
 			target.y -= 1.0;
 		}
 	}
+	if (input->PushKey(DIK_W) || input->PushKey(DIK_S)) {
+		if (input->PushKey(DIK_W)) {
+			eye.z += 1.0;
+			target.z += 1.0;
+		}
+		else if (input->PushKey(DIK_S)) {
+			eye.z -= 1.0;
+			target.z -= 1.0;
+		}
+	}
 	//ビュー変換行列の計算
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 }

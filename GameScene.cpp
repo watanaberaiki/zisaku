@@ -44,13 +44,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	//グラフィックスパイプライン生成
 	FbxObject3D::CreateGraphicsPipeline();
 
-	model1 = FbxLoader::GetInstance()->LoadModelFromFile("boneTest","Resources/white1x1.png");
+	model1 = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
 
 	//3Dオブジェクト生成とモデルのセット
 	object1 = new FbxObject3D();
 	object1->Initialize();
 	object1->SetModel(model1);
-	object1->SetPosition({ 0,0,0 });
 	object1->Update();
 
 	//パーティクル
@@ -140,8 +139,8 @@ void GameScene::Draw()
 	Object3d::PreDraw(dxCommon_->GetCommandlist());
 
 	////3Dオブジェクトの描画
-	//sphereobj->Draw();
-	//blockobj->Draw();
+	sphereobj->Draw();
+	blockobj->Draw();
 	object1->Draw(dxCommon_->GetCommandlist());
 	Object3d::PostDraw();
 
